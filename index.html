@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>fmcode – kostenlose Browserspiele: Feuer Frei und Petri Heil</title>
+<meta name="description" content="Zwei kostenlose Spiele im Browser, ohne Installation: Feuer Frei, ein 3D-Shooter für 1 gegen 1 bis 4 gegen 4 mit Freunden, und Petri Heil, ein Pixel-Angelspiel mit Fangbuch und Tagesrangliste.">
+<link rel="canonical" href="https://fmcode.de/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="fmcode – Feuer Frei und Petri Heil">
+<meta property="og:description" content="Zwei kostenlose Browserspiele: ein 3D-Shooter mit Freunden und ein Pixel-Angelspiel. Ohne Installation, am PC und am Handy.">
+<meta property="og:url" content="https://fmcode.de/">
+<meta property="og:image" content="https://fmcode.de/bilder/feuer-frei.jpg">
+<meta name="theme-color" content="#17191e">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='8' height='16' fill='%23f2b636'/%3E%3Crect x='8' width='8' height='16' fill='%232b5a72'/%3E%3C/svg%3E">
+<link rel="preload" href="fonts/rajdhani-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/silkscreen-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:"Rajdhani";font-weight:700;font-display:swap;src:url(fonts/rajdhani-latin-700-normal.woff2) format("woff2")}
+@font-face{font-family:"Silkscreen";font-weight:400;font-display:swap;src:url(fonts/silkscreen-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:"Silkscreen";font-weight:700;font-display:swap;src:url(fonts/silkscreen-latin-700-normal.woff2) format("woff2")}
+
+:root{
+  /* Feuer Frei: Hof bei Tag, Beton und Messing */
+  --ff-ground:#17191e;
+  --ff-text:#ece6da;
+  --ff-dim:#a39d92;
+  --ff-gold:#f2b636;
+  /* Petri Heil: See bei Nacht */
+  --ph-ground:#1f2b45;
+  --ph-text:#f3e9d2;
+  --ph-dim:#a3b1c7;
+  --ph-gold:#f2c14e;
+  --ph-shadow:#080c16;
+  --body:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;min-height:100vh;
+  font:400 1rem/1.55 var(--body);
+  color:var(--ff-text);
+  /* Die Seite ist der Länge nach geteilt: links der Hof, rechts der See */
+  background:linear-gradient(90deg,var(--ff-ground) 50%,var(--ph-ground) 50%);
+  display:flex;flex-direction:column;
+}
+a{color:inherit}
+:focus-visible{outline:3px solid #fff;outline-offset:3px}
+
+header{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:20px clamp(16px,4vw,48px);
+}
+.marke{margin:0;font:700 1.05rem/1 var(--body);letter-spacing:.01em}
+.marke span{font-weight:400;color:var(--ff-dim)}
+.sprache{display:flex;gap:2px;font-size:.875rem}
+.sprache button{
+  font:inherit;color:var(--ph-dim);background:none;border:0;padding:6px 8px;cursor:pointer;
+}
+.sprache button[aria-pressed="true"]{color:var(--ph-text);text-decoration:underline;text-underline-offset:4px}
+
+main{flex:1;display:grid;grid-template-columns:1fr 1fr}
+.spiel{display:flex;flex-direction:column;min-width:0}
+/* Die beiden Vorschaubilder stoßen ohne Fuge aneinander: Hofmauer und Wasserlinie liegen fast auf einer Höhe */
+.bild{display:block;line-height:0;overflow:hidden}
+/* Nur die Szene oben im Vorschaubild; der eingebaute Titel darunter bleibt abgeschnitten */
+.bild img,.bild svg{display:block;width:100%;height:auto;aspect-ratio:1200/390;transition:filter .2s}
+.bild img{object-fit:cover;object-position:50% 0}
+.bild:hover img,.bild:hover svg{filter:brightness(1.08)}
+.text{padding:28px clamp(16px,4vw,48px) 48px;max-width:36rem}
+.text h2{margin:0 0 10px}
+.text p{margin:0 0 12px}
+.fakten{list-style:none;margin:0 0 24px;padding:0;display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.9375rem}
+
+.feuer{color:var(--ff-text)}
+.feuer h2{font:700 2.5rem/1.05 "Rajdhani",var(--body);letter-spacing:.06em}
+.feuer .fakten{color:var(--ff-dim)}
+.feuer .los{
+  display:inline-block;padding:12px 30px 11px;
+  font:700 1.25rem/1 "Rajdhani",var(--body);letter-spacing:.08em;text-decoration:none;
+  color:var(--ff-ground);background:var(--ff-gold);
+  clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,14px 100%,0 calc(100% - 14px));
+}
+.feuer .los:hover{background:#ffc94f}
+
+.petri{color:var(--ph-text)}
+.petri h2{font:700 1.875rem/1.2 "Silkscreen",monospace;letter-spacing:.04em}
+.petri .fakten{color:var(--ph-dim)}
+.petri .los{
+  display:inline-block;padding:11px 24px;
+  font:400 1.0625rem/1 "Silkscreen",monospace;text-decoration:none;
+  color:var(--ph-shadow);background:var(--ph-gold);
+  box-shadow:4px 4px 0 var(--ph-shadow);
+}
+.petri .los:hover{background:#ffd36a}
+.petri .los:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ph-shadow)}
+
+footer{
+  display:grid;grid-template-columns:1fr 1fr;font-size:.8125rem;
+}
+footer p{margin:0;padding:18px clamp(16px,4vw,48px) 24px}
+footer p:first-child{color:var(--ff-dim)}
+footer p:last-child{color:var(--ph-dim)}
+
+@media (max-width:760px){
+  body{background:var(--ff-ground)}
+  header{background:var(--ff-ground)}
+  main{grid-template-columns:1fr}
+  .petri{background:var(--ph-ground)}
+  .text{padding-bottom:40px}
+  footer{grid-template-columns:1fr;background:var(--ph-ground)}
+  footer p:first-child{padding-bottom:0;color:var(--ph-dim)}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <h1 class="marke">fmcode <span data-de="Spiele im Browser" data-en="Browser games">Spiele im Browser</span></h1>
+  <div class="sprache" role="group" aria-label="Sprache / Language">
+    <button type="button" data-lang="de" aria-pressed="true">DE</button>
+    <button type="button" data-lang="en" aria-pressed="false">EN</button>
+  </div>
+</header>
+
+<main>
+  <section class="spiel feuer" aria-labelledby="t-feuer">
+    <a class="bild" href="https://feuerfrei.fmcode.de/" tabindex="-1" aria-hidden="true">
+      <img src="bilder/feuer-frei.jpg" width="1200" height="630" alt="">
+    </a>
+    <div class="text">
+      <h2 id="t-feuer">FEUER FREI</h2>
+      <p data-de="3D-Shooter im Browser. Schick deinen Freunden einen Link und spielt 1 gegen 1 bis 4 gegen 4 – oder tritt allein gegen KI-Gegner an."
+         data-en="A 3D shooter in your browser. Send your friends a link and play anything from 1v1 to 4v4 – or take on AI opponents alone.">3D-Shooter im Browser. Schick deinen Freunden einen Link und spielt 1 gegen 1 bis 4 gegen 4 – oder tritt allein gegen KI-Gegner an.</p>
+      <ul class="fakten">
+        <li data-de="3 Karten" data-en="3 maps">3 Karten</li>
+        <li data-de="Kaufmenü und Skins" data-en="Buy menu and skins">Kaufmenü und Skins</li>
+        <li data-de="PC und Handy" data-en="PC and phone">PC und Handy</li>
+      </ul>
+      <a class="los" href="https://feuerfrei.fmcode.de/" data-de="Feuer Frei spielen" data-en="Play Feuer Frei">Feuer Frei spielen</a>
+    </div>
+  </section>
+
+  <section class="spiel petri" aria-labelledby="t-petri">
+    <a class="bild" href="https://petri.fmcode.de/" tabindex="-1" aria-hidden="true">
+      <!-- See-Szene aus dem Vorschaubild von Petri Heil, ohne Schrift nachgezeichnet -->
+      <svg viewBox="0 0 1200 345" preserveAspectRatio="xMidYMax slice" shape-rendering="crispEdges">
+        <defs>
+          <pattern id="punkte" width="6" height="6" patternUnits="userSpaceOnUse"><rect width="2" height="2" fill="#2a3a5e"/></pattern>
+          <linearGradient id="wasser" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2d5c74"/><stop offset="1" stop-color="#1b3550"/></linearGradient>
+        </defs>
+        <rect width="1200" height="345" fill="#23304f"/>
+        <rect width="1200" height="200" fill="url(#punkte)"/>
+        <rect y="200" width="1200" height="145" fill="url(#wasser)"/>
+        <g fill="none" stroke="#5a8aa1" stroke-width="2" opacity=".55">
+          <path d="M0 236q50-8 100 0t100 0 100 0 100 0 100 0 100 0 100 0 100 0 100 0 100 0 100 0 100 0"/>
+          <path d="M-50 278q50-8 100 0t100 0 100 0 100 0 100 0 100 0 100 0 100 0 100 0 100 0 100 0 100 0 100 0"/>
+          <path d="M0 320q50-8 100 0t100 0 100 0 100 0 100 0 100 0 100 0 100 0 100 0 100 0 100 0 100 0"/>
+        </g>
+        <rect x="249" y="0" width="3" height="178" fill="#f3e9d2"/>
+        <rect x="240" y="176" width="20" height="18" fill="#e4573d"/>
+        <rect x="240" y="194" width="20" height="18" fill="#f3e9d2"/>
+        <g fill="#6fa35a">
+          <rect x="1040" y="78" width="8" height="122"/><rect x="1068" y="28" width="8" height="172"/>
+          <rect x="1096" y="108" width="8" height="92"/><rect x="1124" y="52" width="8" height="148"/>
+          <rect x="1152" y="132" width="8" height="68"/>
+        </g>
+        <g transform="translate(792 262) scale(10)">
+          <path fill="#b9bdb6" d="M2 0h5v1H2zM10 0h1v1h-1zM1 1h7v1H1zM9 1h1v1H9zM0 2h11v1H0zM1 3h7v1H1zM9 3h1v1H9zM2 4h5v1H2zM10 4h1v1h-1z"/>
+          <rect x="2" y="1" width="1" height="1" fill="#1b3550"/>
+        </g>
+      </svg>
+    </a>
+    <div class="text">
+      <h2 id="t-petri">PETRI HEIL</h2>
+      <p data-de="Pixel-Angelspiel. Auswerfen, drillen, das Fangbuch füllen – jede Runde dauert 60 Sekunden, die besten Fänge des Tages kommen in die Rangliste."
+         data-en="A pixel fishing game. Cast, reel in, fill your catch log – every round lasts 60 seconds, and the day's best catches go on the leaderboard.">Pixel-Angelspiel. Auswerfen, drillen, das Fangbuch füllen – jede Runde dauert 60 Sekunden, die besten Fänge des Tages kommen in die Rangliste.</p>
+      <ul class="fakten">
+        <li data-de="3 Gewässer" data-en="3 waters">3 Gewässer</li>
+        <li data-de="33 Fischarten" data-en="33 species">33 Fischarten</li>
+        <li data-de="Angelladen" data-en="Tackle shop">Angelladen</li>
+      </ul>
+      <a class="los" href="https://petri.fmcode.de/" data-de="Petri Heil spielen" data-en="Play Petri Heil">Petri Heil spielen</a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p data-de="Beide Spiele sind kostenlos und laufen ohne Installation." data-en="Both games are free and need no installation.">Beide Spiele sind kostenlos und laufen ohne Installation.</p>
+  <p data-de="Diese Seite setzt keine Cookies und zählt keine Besuche." data-en="This page sets no cookies and counts no visits.">Diese Seite setzt keine Cookies und zählt keine Besuche.</p>
+</footer>
+
+<script>
+(function () {
+  var texte = document.querySelectorAll('[data-de]');
+  var knoepfe = document.querySelectorAll('.sprache button');
+  function setze(lang) {
+    document.documentElement.lang = lang;
+    for (var i = 0; i < texte.length; i++) texte[i].textContent = texte[i].getAttribute('data-' + lang);
+    for (var j = 0; j < knoepfe.length; j++) knoepfe[j].setAttribute('aria-pressed', knoepfe[j].getAttribute('data-lang') === lang);
+  }
+  var gemerkt = null;
+  try { gemerkt = localStorage.getItem('fmcode-sprache'); } catch (e) {}
+  var browser = (navigator.languages && navigator.languages[0]) || navigator.language || 'de';
+  setze(gemerkt || (/^de/i.test(browser) ? 'de' : 'en'));
+  for (var k = 0; k < knoepfe.length; k++) knoepfe[k].addEventListener('click', function () {
+    var lang = this.getAttribute('data-lang');
+    setze(lang);
+    try { localStorage.setItem('fmcode-sprache', lang); } catch (e) {}
+  });
+})();
+</script>
+</body>
+</html>
