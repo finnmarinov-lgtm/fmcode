@@ -95,12 +95,9 @@ main{flex:1;display:grid;grid-template-columns:1fr 1fr}
 .petri .los:hover{background:#ffd36a}
 .petri .los:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ph-shadow)}
 
-footer{
-  display:grid;grid-template-columns:1fr 1fr;font-size:.8125rem;
-}
-footer p{margin:0;padding:18px clamp(16px,4vw,48px) 24px}
-footer p:first-child{color:var(--ff-dim)}
-footer p:last-child{color:var(--ph-dim)}
+/* Eine durchgehende Leiste über beide Hälften: der Text gehört zur Startseite, nicht zu einem der Spiele */
+footer{background:#101216;color:#9a978f;font-size:.8125rem}
+footer p{margin:0;max-width:64rem;padding:16px clamp(16px,4vw,48px) 20px}
 
 @media (max-width:760px){
   body{background:var(--ff-ground)}
@@ -108,8 +105,6 @@ footer p:last-child{color:var(--ph-dim)}
   main{grid-template-columns:1fr}
   .petri{background:var(--ph-ground)}
   .text{padding-bottom:40px}
-  footer{grid-template-columns:1fr;background:var(--ph-ground)}
-  footer p:first-child{padding-bottom:0;color:var(--ph-dim)}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -186,8 +181,8 @@ footer p:last-child{color:var(--ph-dim)}
 </main>
 
 <footer>
-  <p data-de="Beide Spiele sind kostenlos und laufen ohne Installation." data-en="Both games are free and need no installation.">Beide Spiele sind kostenlos und laufen ohne Installation.</p>
-  <p data-de="Diese Seite setzt keine Cookies und zählt keine Besuche." data-en="This page sets no cookies and counts no visits.">Diese Seite setzt keine Cookies und zählt keine Besuche.</p>
+  <p data-de="Beide Spiele sind kostenlos und laufen ohne Installation. Die Startseite selbst setzt keine Cookies und zählt keine Besuche; was die Spiele speichern, steht in ihren eigenen Hinweisen."
+     data-en="Both games are free and need no installation. This start page itself sets no cookies and counts no visits; what the games store is explained in their own notices.">Beide Spiele sind kostenlos und laufen ohne Installation. Die Startseite selbst setzt keine Cookies und zählt keine Besuche; was die Spiele speichern, steht in ihren eigenen Hinweisen.</p>
 </footer>
 
 <script>
