@@ -12,7 +12,8 @@
 <meta property="og:url" content="https://fmcode.de/">
 <meta property="og:image" content="https://fmcode.de/bilder/feuer-frei.jpg">
 <meta name="theme-color" content="#17191e">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='8' height='16' fill='%23f2b636'/%3E%3Crect x='8' width='8' height='16' fill='%232b5a72'/%3E%3C/svg%3E">
+<link rel="icon" href="logo.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preload" href="fonts/rajdhani-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/silkscreen-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -51,7 +52,8 @@ a{color:inherit}
 .rahmen{width:100%;max-width:1120px;margin:0 auto;padding:0 clamp(16px,4vw,32px)}
 
 header .rahmen{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:20px;padding-bottom:20px}
-.marke{font:700 1.05rem/1 var(--body);letter-spacing:.01em}
+.marke{display:flex;align-items:center;gap:10px;font:700 1.05rem/1 var(--body);letter-spacing:.01em}
+.marke img{display:block;border-radius:7px}
 .sprache{display:flex;gap:2px;font-size:.875rem}
 .sprache button{font:inherit;color:var(--leise);background:none;border:0;padding:6px 8px;cursor:pointer}
 .sprache button[aria-pressed="true"]{color:var(--text);text-decoration:underline;text-underline-offset:4px}
@@ -111,7 +113,7 @@ footer p.rahmen{margin:0 auto;padding-top:18px;padding-bottom:24px}
 <body>
 <header>
   <div class="rahmen">
-    <div class="marke">fmcode</div>
+    <div class="marke"><img src="logo.svg" width="28" height="28" alt="">fmcode</div>
     <div class="sprache" role="group" aria-label="Sprache / Language">
       <button type="button" data-lang="de" aria-pressed="true">DE</button>
       <button type="button" data-lang="en" aria-pressed="false">EN</button>
