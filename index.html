@@ -21,8 +21,11 @@
 @font-face{font-family:"Silkscreen";font-weight:700;font-display:swap;src:url(fonts/silkscreen-latin-700-normal.woff2) format("woff2")}
 
 :root{
+  --seite:#14161b;
+  --text:#ece6da;
+  --leise:#9a978f;
   /* Feuer Frei: Hof bei Tag, Beton und Messing */
-  --ff-ground:#17191e;
+  --ff-ground:#1d2026;
   --ff-text:#ece6da;
   --ff-dim:#a39d92;
   --ff-gold:#f2b636;
@@ -39,42 +42,42 @@ html{-webkit-text-size-adjust:100%}
 body{
   margin:0;min-height:100vh;
   font:400 1rem/1.55 var(--body);
-  color:var(--ff-text);
-  /* Die Seite ist der Länge nach geteilt: links der Hof, rechts der See */
-  background:linear-gradient(90deg,var(--ff-ground) 50%,var(--ph-ground) 50%);
+  color:var(--text);background:var(--seite);
   display:flex;flex-direction:column;
 }
 a{color:inherit}
 :focus-visible{outline:3px solid #fff;outline-offset:3px}
 
-header{
-  display:flex;align-items:center;justify-content:space-between;gap:16px;
-  padding:20px clamp(16px,4vw,48px);
-}
-.marke{margin:0;font:700 1.05rem/1 var(--body);letter-spacing:.01em}
-.marke span{font-weight:400;color:var(--ff-dim)}
+.rahmen{width:100%;max-width:1120px;margin:0 auto;padding:0 clamp(16px,4vw,32px)}
+
+header .rahmen{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:20px;padding-bottom:20px}
+.marke{font:700 1.05rem/1 var(--body);letter-spacing:.01em}
 .sprache{display:flex;gap:2px;font-size:.875rem}
-.sprache button{
-  font:inherit;color:var(--ph-dim);background:none;border:0;padding:6px 8px;cursor:pointer;
-}
-.sprache button[aria-pressed="true"]{color:var(--ph-text);text-decoration:underline;text-underline-offset:4px}
+.sprache button{font:inherit;color:var(--leise);background:none;border:0;padding:6px 8px;cursor:pointer}
+.sprache button[aria-pressed="true"]{color:var(--text);text-decoration:underline;text-underline-offset:4px}
 
-main{flex:1;display:grid;grid-template-columns:1fr 1fr}
-.spiel{display:flex;flex-direction:column;min-width:0}
-/* Die beiden Vorschaubilder stoßen ohne Fuge aneinander: Hofmauer und Wasserlinie liegen fast auf einer Höhe */
-.bild{display:block;line-height:0;overflow:hidden}
+.kopf{padding-top:clamp(24px,6vw,64px);padding-bottom:clamp(28px,5vw,48px)}
+.kopf h1{margin:0 0 12px;font:800 clamp(2rem,5.2vw,3.5rem)/1.05 var(--body);letter-spacing:-.02em;max-width:16ch}
+.kopf p{margin:0;color:var(--leise);font-size:clamp(1rem,1.6vw,1.125rem);max-width:44ch}
+
+main{flex:1}
+.karten{display:grid;grid-template-columns:1fr 1fr;gap:clamp(16px,2.5vw,28px);padding-bottom:clamp(40px,6vw,72px)}
+.spiel{display:flex;flex-direction:column;min-width:0;border-radius:28px;overflow:hidden;box-shadow:0 1px 0 rgba(255,255,255,.06) inset}
 /* Nur die Szene oben im Vorschaubild; der eingebaute Titel darunter bleibt abgeschnitten */
-.bild img,.bild svg{display:block;width:100%;height:auto;aspect-ratio:1200/390;transition:filter .2s}
+.bild{display:block;line-height:0;overflow:hidden}
+.bild img,.bild svg{display:block;width:100%;height:auto;aspect-ratio:1200/400;transition:transform .35s ease}
 .bild img{object-fit:cover;object-position:50% 0}
-.bild:hover img,.bild:hover svg{filter:brightness(1.08)}
-.text{padding:28px clamp(16px,4vw,48px) 48px;max-width:36rem}
+.bild:hover img,.bild:hover svg{transform:scale(1.03)}
+.text{display:flex;flex-direction:column;flex:1;padding:clamp(20px,3vw,32px)}
 .text h2{margin:0 0 10px}
-.text p{margin:0 0 12px}
-.fakten{list-style:none;margin:0 0 24px;padding:0;display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.9375rem}
+.text p{margin:0 0 14px}
+.fakten{list-style:none;margin:0 0 26px;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.fakten li{font-size:.875rem;padding:4px 12px;border-radius:999px}
+.los{margin-top:auto;align-self:flex-start}
 
-.feuer{color:var(--ff-text)}
-.feuer h2{font:700 2.5rem/1.05 "Rajdhani",var(--body);letter-spacing:.06em}
-.feuer .fakten{color:var(--ff-dim)}
+.feuer{background:var(--ff-ground);color:var(--ff-text)}
+.feuer h2{font:700 2.25rem/1.05 "Rajdhani",var(--body);letter-spacing:.06em}
+.feuer .fakten li{color:var(--ff-dim);background:rgba(236,230,218,.07)}
 .feuer .los{
   display:inline-block;padding:12px 30px 11px;
   font:700 1.25rem/1 "Rajdhani",var(--body);letter-spacing:.08em;text-decoration:none;
@@ -83,9 +86,9 @@ main{flex:1;display:grid;grid-template-columns:1fr 1fr}
 }
 .feuer .los:hover{background:#ffc94f}
 
-.petri{color:var(--ph-text)}
-.petri h2{font:700 1.875rem/1.2 "Silkscreen",monospace;letter-spacing:.04em}
-.petri .fakten{color:var(--ph-dim)}
+.petri{background:var(--ph-ground);color:var(--ph-text)}
+.petri h2{font:700 1.75rem/1.2 "Silkscreen",monospace;letter-spacing:.04em}
+.petri .fakten li{color:var(--ph-dim);background:rgba(243,233,210,.07)}
 .petri .los{
   display:inline-block;padding:11px 24px;
   font:400 1.0625rem/1 "Silkscreen",monospace;text-decoration:none;
@@ -95,30 +98,33 @@ main{flex:1;display:grid;grid-template-columns:1fr 1fr}
 .petri .los:hover{background:#ffd36a}
 .petri .los:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ph-shadow)}
 
-/* Eine durchgehende Leiste über beide Hälften: der Text gehört zur Startseite, nicht zu einem der Spiele */
-footer{background:#101216;color:#9a978f;font-size:.8125rem}
-footer p{margin:0;max-width:64rem;padding:16px clamp(16px,4vw,48px) 20px}
+footer{border-top:1px solid rgba(255,255,255,.07);color:var(--leise);font-size:.8125rem}
+footer p.rahmen{margin:0 auto;padding-top:18px;padding-bottom:24px}
 
 @media (max-width:760px){
-  body{background:var(--ff-ground)}
-  header{background:var(--ff-ground)}
-  main{grid-template-columns:1fr}
-  .petri{background:var(--ph-ground)}
-  .text{padding-bottom:40px}
+  .karten{grid-template-columns:1fr}
+  .spiel{border-radius:22px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
 <header>
-  <h1 class="marke">fmcode <span data-de="Spiele im Browser" data-en="Browser games">Spiele im Browser</span></h1>
-  <div class="sprache" role="group" aria-label="Sprache / Language">
-    <button type="button" data-lang="de" aria-pressed="true">DE</button>
-    <button type="button" data-lang="en" aria-pressed="false">EN</button>
+  <div class="rahmen">
+    <div class="marke">fmcode</div>
+    <div class="sprache" role="group" aria-label="Sprache / Language">
+      <button type="button" data-lang="de" aria-pressed="true">DE</button>
+      <button type="button" data-lang="en" aria-pressed="false">EN</button>
+    </div>
   </div>
 </header>
 
 <main>
+  <div class="rahmen kopf">
+    <h1 data-de="Zwei Spiele, direkt im Browser" data-en="Two games, right in your browser">Zwei Spiele, direkt im Browser</h1>
+    <p data-de="Kostenlos und ohne Installation – am PC und am Handy. Such dir eins aus." data-en="Free and nothing to install – on PC and on your phone. Pick one.">Kostenlos und ohne Installation – am PC und am Handy. Such dir eins aus.</p>
+  </div>
+  <div class="rahmen karten">
   <section class="spiel feuer" aria-labelledby="t-feuer">
     <a class="bild" href="https://feuerfrei.fmcode.de/" tabindex="-1" aria-hidden="true">
       <img src="bilder/feuer-frei.jpg" width="1200" height="630" alt="">
@@ -152,15 +158,15 @@ footer p{margin:0;max-width:64rem;padding:16px clamp(16px,4vw,48px) 20px}
           <path d="M-50 278q50-8 100 0t100 0 100 0 100 0 100 0 100 0 100 0 100 0 100 0 100 0 100 0 100 0 100 0"/>
           <path d="M0 320q50-8 100 0t100 0 100 0 100 0 100 0 100 0 100 0 100 0 100 0 100 0 100 0 100 0"/>
         </g>
-        <rect x="249" y="0" width="3" height="178" fill="#f3e9d2"/>
-        <rect x="240" y="176" width="20" height="18" fill="#e4573d"/>
-        <rect x="240" y="194" width="20" height="18" fill="#f3e9d2"/>
+        <rect x="289" y="0" width="3" height="178" fill="#f3e9d2"/>
+        <rect x="280" y="176" width="20" height="18" fill="#e4573d"/>
+        <rect x="280" y="194" width="20" height="18" fill="#f3e9d2"/>
         <g fill="#6fa35a">
-          <rect x="1000" y="78" width="8" height="122"/><rect x="1028" y="28" width="8" height="172"/>
-          <rect x="1056" y="108" width="8" height="92"/><rect x="1084" y="52" width="8" height="148"/>
-          <rect x="1112" y="132" width="8" height="68"/>
+          <rect x="930" y="78" width="8" height="122"/><rect x="958" y="28" width="8" height="172"/>
+          <rect x="986" y="108" width="8" height="92"/><rect x="1014" y="52" width="8" height="148"/>
+          <rect x="1042" y="132" width="8" height="68"/>
         </g>
-        <g transform="translate(792 262) scale(10)">
+        <g transform="translate(720 262) scale(10)">
           <path fill="#b9bdb6" d="M2 0h5v1H2zM10 0h1v1h-1zM1 1h7v1H1zM9 1h1v1H9zM0 2h11v1H0zM1 3h7v1H1zM9 3h1v1H9zM2 4h5v1H2zM10 4h1v1h-1z"/>
           <rect x="2" y="1" width="1" height="1" fill="#1b3550"/>
         </g>
@@ -178,10 +184,11 @@ footer p{margin:0;max-width:64rem;padding:16px clamp(16px,4vw,48px) 20px}
       <a class="los" href="https://petri.fmcode.de/" data-de="Petri Heil spielen" data-en="Play Petri Heil">Petri Heil spielen</a>
     </div>
   </section>
+  </div>
 </main>
 
 <footer>
-  <p data-de="Beide Spiele sind kostenlos und laufen ohne Installation. Die Startseite selbst setzt keine Cookies und zählt keine Besuche; was die Spiele speichern, steht in ihren eigenen Hinweisen."
+  <p class="rahmen" data-de="Beide Spiele sind kostenlos und laufen ohne Installation. Die Startseite selbst setzt keine Cookies und zählt keine Besuche; was die Spiele speichern, steht in ihren eigenen Hinweisen."
      data-en="Both games are free and need no installation. This start page itself sets no cookies and counts no visits; what the games store is explained in their own notices.">Beide Spiele sind kostenlos und laufen ohne Installation. Die Startseite selbst setzt keine Cookies und zählt keine Besuche; was die Spiele speichern, steht in ihren eigenen Hinweisen.</p>
 </footer>
 
