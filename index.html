@@ -102,12 +102,53 @@ main{flex:1}
 .petri .los:hover{background:#ffd36a}
 .petri .los:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ph-shadow)}
 
+/* Persönliche Seiten: nur nach Anmeldung (persoenlich.js) */
+.privat{padding-bottom:clamp(40px,6vw,72px)}
+.privat[hidden],.privat [hidden]{display:none}
+.privat-karte{background:#1b1e24;border:1px solid rgba(255,255,255,.08);border-radius:28px;padding:clamp(20px,3vw,32px)}
+.privat-kopf{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.privat h2{margin:0;font:800 clamp(1.5rem,3vw,1.875rem)/1.1 var(--body);letter-spacing:-.01em}
+.privat .hinweis{margin:0 0 18px;color:var(--leise)}
+.knopf{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 22px;border-radius:999px;font:600 .9375rem/1 var(--body);cursor:pointer;border:1px solid transparent}
+.knopf.voll{background:var(--text);color:var(--seite)}
+.knopf.voll:hover{background:#fff}
+.knopf.voll:disabled{opacity:.6;cursor:wait}
+.knopf.rand{background:none;color:var(--text);border-color:rgba(255,255,255,.25)}
+.knopf.rand:hover{border-color:rgba(255,255,255,.5)}
+.anmeldung{max-width:400px}
+.anmeldung label{display:block;margin-bottom:14px;font-size:.875rem;color:var(--leise)}
+.anmeldung input{display:block;width:100%;margin-top:6px;padding:12px 14px;font:inherit;font-size:1rem;color:var(--text);background:#111317;border:1px solid rgba(255,255,255,.18);border-radius:12px}
+.anmeldung input:focus-visible{outline-offset:1px}
+.passwort{display:flex;gap:8px;margin-top:6px}
+.passwort input{margin-top:0;flex:1;min-width:0}
+.passwort .knopf{padding:0 16px;font-size:.875rem}
+.anmeldung .zeile{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+.fehler{color:#ff9b8a}
+#anmelde-fehler{margin:14px 0 0;min-height:1.5em;font-size:.9375rem}
+#privat-status{margin:0;font-size:.9375rem;color:var(--leise)}
+#privat-status:empty{display:none}
+#privat-status.fehler{color:#ff9b8a}
+.privat-liste{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:12px}
+.privat-liste a{display:flex;flex-direction:column;gap:4px;height:100%;padding:18px 20px;border-radius:20px;background:rgba(236,230,218,.06);text-decoration:none;transition:background .2s}
+.privat-liste a:hover{background:rgba(236,230,218,.11)}
+.privat-liste .titel{font-weight:700;font-size:1.0625rem}
+.privat-liste .titel::after{content:" →";color:var(--leise)}
+.privat-liste .beschr{color:var(--leise);font-size:.9375rem}
+.privat-liste .adresse{color:var(--leise);font-size:.8125rem;opacity:.8;overflow-wrap:anywhere}
+
 footer{border-top:1px solid rgba(255,255,255,.07);color:var(--leise);font-size:.8125rem}
-footer p.rahmen{margin:0 auto;padding-top:18px;padding-bottom:24px}
+.fuss{display:flex;align-items:flex-start;justify-content:space-between;gap:12px 24px;padding-top:18px;padding-bottom:24px}
+.fuss p{margin:0}
+.anmelde-knopf{flex:none;display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0 14px;font:inherit;color:var(--leise);background:none;border:1px solid rgba(255,255,255,.12);border-radius:999px;cursor:pointer}
+.anmelde-knopf:hover{color:var(--text);border-color:rgba(255,255,255,.3)}
+.anmelde-knopf[hidden]{display:none}
+#abgemeldet{margin:0;align-self:center;color:var(--text)}
+#abgemeldet[hidden]{display:none}
 
 @media (max-width:760px){
   .karten{grid-template-columns:1fr}
-  .spiel{border-radius:22px}
+  .spiel,.privat-karte{border-radius:22px}
+  .fuss{flex-direction:column}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -189,11 +230,46 @@ footer p.rahmen{margin:0 auto;padding-top:18px;padding-bottom:24px}
     </div>
   </section>
   </div>
+
+  <!-- Persönliche Seiten: nur nach Anmeldung sichtbar, Inhalt kommt erst danach von Supabase (persoenlich.js) -->
+  <section class="rahmen privat" id="privat" aria-labelledby="t-privat" lang="de" hidden>
+    <div class="privat-karte">
+      <div class="privat-kopf">
+        <h2 id="t-privat">Persönliche Seiten</h2>
+        <button type="button" class="knopf rand" id="abmelden" hidden>Abmelden</button>
+      </div>
+      <form id="anmeldung" class="anmeldung" novalidate>
+        <p class="hinweis">Persönlicher Bereich – bitte mit E-Mail-Adresse und Passwort anmelden.</p>
+        <label>E-Mail-Adresse
+          <input type="email" name="email" autocomplete="username" inputmode="email" autocapitalize="off" spellcheck="false" required>
+        </label>
+        <label for="passwort">Passwort</label>
+        <div class="passwort">
+          <input type="password" name="passwort" id="passwort" autocomplete="current-password" required>
+          <button type="button" class="knopf rand" id="passwort-zeigen" aria-pressed="false" aria-controls="passwort">Zeigen</button>
+        </div>
+        <p id="anmelde-fehler" class="fehler" role="alert"></p>
+        <div class="zeile">
+          <button type="submit" class="knopf voll">Anmelden</button>
+          <button type="button" class="knopf rand" id="abbrechen">Abbrechen</button>
+        </div>
+      </form>
+      <p id="privat-status" role="status"></p>
+      <ul class="privat-liste" id="privat-liste" hidden></ul>
+    </div>
+  </section>
 </main>
 
 <footer>
-  <p class="rahmen" data-de="Beide Spiele sind kostenlos und laufen ohne Installation. Die Startseite selbst setzt keine Cookies und zählt keine Besuche; was die Spiele speichern, steht in ihren eigenen Hinweisen."
-     data-en="Both games are free and need no installation. This start page itself sets no cookies and counts no visits; what the games store is explained in their own notices.">Beide Spiele sind kostenlos und laufen ohne Installation. Die Startseite selbst setzt keine Cookies und zählt keine Besuche; was die Spiele speichern, steht in ihren eigenen Hinweisen.</p>
+  <div class="rahmen fuss">
+    <p data-de="Beide Spiele sind kostenlos und laufen ohne Installation. Die Startseite selbst setzt keine Cookies und zählt keine Besuche; was die Spiele speichern, steht in ihren eigenen Hinweisen."
+       data-en="Both games are free and need no installation. This start page itself sets no cookies and counts no visits; what the games store is explained in their own notices.">Beide Spiele sind kostenlos und laufen ohne Installation. Die Startseite selbst setzt keine Cookies und zählt keine Besuche; was die Spiele speichern, steht in ihren eigenen Hinweisen.</p>
+    <p id="abgemeldet" role="status" lang="de" hidden>Abgemeldet.</p>
+    <button type="button" class="anmelde-knopf" id="anmelden-oeffnen" aria-controls="privat">
+      <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+      <span data-de="Anmelden" data-en="Sign in">Anmelden</span>
+    </button>
+  </div>
 </footer>
 
 <script>
@@ -216,5 +292,6 @@ footer p.rahmen{margin:0 auto;padding-top:18px;padding-bottom:24px}
   });
 })();
 </script>
+<script src="persoenlich.js" defer></script>
 </body>
 </html>
