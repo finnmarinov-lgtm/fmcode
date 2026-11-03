@@ -1,0 +1,13 @@
+{
+  "name": "Spieler online – fmcode",
+  "short_name": "Online",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#14161b",
+  "theme_color": "#14161b",
+  "icons": [
+    { "src": "../apple-touch-icon.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "../favicon-96.png", "sizes": "96x96", "type": "image/png" }
+  ]
+}

@@ -109,6 +109,10 @@
     abmeldenKnopf.hidden = false;
     oeffnenKnopf.hidden = true;
     liste.textContent = '';
+    // Für freigegebene Konten immer dabei: die Live-Anzeige der Spieler (prüft die Anmeldung selbst)
+    if (seiten.length) {
+      seiten = [{ titel: 'Spieler online', beschreibung: 'Wer gerade Feuer Frei und Petri Heil spielt, live', adresse: 'https://fmcode.de/online/' }].concat(seiten);
+    }
     for (var i = 0; i < seiten.length; i++) {
       var s = seiten[i];
       if (!/^https:\/\//.test(s.adresse || '')) continue; // nur sichere Adressen

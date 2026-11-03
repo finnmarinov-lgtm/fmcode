@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Spieler online</title>
+<meta name="theme-color" content="#14161b">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="../favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<style>
+@font-face{font-family:"Rajdhani";font-weight:700;font-display:swap;src:url(../fonts/rajdhani-latin-700-normal.woff2) format("woff2")}
+@font-face{font-family:"Silkscreen";font-weight:400;font-display:swap;src:url(../fonts/silkscreen-latin-400-normal.woff2) format("woff2")}
+:root{
+  --seite:#14161b; --text:#ece6da; --leise:#9a978f; --gruen:#7fdc6a; --rot:#ff7a6a;
+  --ff-ground:#1d2026; --ff-gold:#f2b636;
+  --ph-ground:#1f2b45; --ph-gold:#f2c14e; --ph-shadow:#080c16;
+  --body:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--seite);color:var(--text);font-family:var(--body)}
+body{min-height:100vh;min-height:100dvh;padding:max(20px,env(safe-area-inset-top)) 16px max(24px,env(safe-area-inset-bottom))}
+main{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+[hidden]{display:none!important}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+h1{margin:0;font-size:1.5rem;font-weight:700}
+.status{display:flex;align-items:center;gap:8px;font-size:.9375rem;color:var(--leise)}
+.status i{width:10px;height:10px;border-radius:50%;background:var(--leise)}
+.status.live i{background:var(--gruen);box-shadow:0 0 10px var(--gruen);animation:puls 2s ease-in-out infinite}
+.status.weg i{background:var(--rot)}
+@keyframes puls{50%{opacity:.45}}
+@media (prefers-reduced-motion:reduce){.status.live i{animation:none}}
+.gesamt{font-size:1rem;color:var(--leise)}
+.gesamt b{color:var(--text);font-size:1.25rem}
+.karten{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px}
+.karte{border-radius:22px;padding:20px 22px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.karte.ff{background:var(--ff-ground)}
+.karte.ph{background:var(--ph-ground)}
+.name{margin:0;font-size:1.25rem}
+.ff .name{font-family:"Rajdhani",var(--body);letter-spacing:.06em;text-transform:uppercase}
+.ff .name span{color:var(--ff-gold)}
+.ph .name{font-family:"Silkscreen",var(--body);font-weight:400;text-shadow:2px 2px 0 var(--ph-shadow)}
+.zahl{font-size:4rem;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+.ff .zahl{font-family:"Rajdhani",var(--body);color:var(--ff-gold)}
+.ph .zahl{font-family:"Silkscreen",var(--body);color:var(--ph-gold);font-size:3.25rem}
+.zahl small{font-family:var(--body);font-size:1rem;font-weight:600;color:var(--leise);margin-left:6px}
+.teile{display:flex;gap:16px;flex-wrap:wrap;font-size:.9375rem;color:var(--leise)}
+.teile b{color:var(--text);font-variant-numeric:tabular-nums}
+.spitze{font-size:.875rem;color:var(--leise)}
+svg.verlauf{width:100%;height:56px;display:block}
+svg.verlauf polyline{fill:none;stroke-width:2;vector-effect:non-scaling-stroke;stroke-linejoin:round}
+.ff svg polyline{stroke:var(--ff-gold)}
+.ph svg polyline{stroke:var(--ph-gold)}
+.hinweis{color:var(--leise);font-size:.875rem;line-height:1.5;margin:0}
+.kasten{border-radius:22px;background:rgba(236,230,218,.06);padding:22px;line-height:1.5}
+a{color:var(--text)}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Spieler online</h1>
+    <div class="status" id="status"><i></i><span id="status-text">Prüfe Anmeldung …</span></div>
+  </header>
+
+  <div class="kasten" id="gesperrt" hidden>
+    <p style="margin:0 0 8px"><b>Nur nach Anmeldung.</b></p>
+    <p style="margin:0" id="gesperrt-text">Bitte zuerst auf <a href="https://fmcode.de/">fmcode.de</a> unten über „Anmelden“ anmelden und dann diese Seite neu laden.</p>
+  </div>
+
+  <div id="inhalt" hidden>
+    <p class="gesamt" id="gesamt"><b>0</b> online in beiden Spielen</p>
+    <div class="karten">
+      <section class="karte ff" aria-label="Feuer Frei">
+        <h2 class="name">Feuer <span>Frei</span></h2>
+        <div class="zahl"><span id="ff-n">0</span><small>online</small></div>
+        <div class="teile"><span>im Menü <b id="ff-menu">0</b></span><span>in einer Partie <b id="ff-spiel">0</b></span></div>
+        <svg class="verlauf" id="ff-verlauf" viewBox="0 0 180 56" preserveAspectRatio="none" aria-hidden="true"><polyline points=""/></svg>
+        <div class="spitze" id="ff-spitze">Höchststand: 0</div>
+      </section>
+      <section class="karte ph" aria-label="Petri Heil">
+        <h2 class="name">Petri Heil</h2>
+        <div class="zahl"><span id="ph-n">0</span><small>online</small></div>
+        <div class="teile"><span>im Menü <b id="ph-menu">0</b></span><span>beim Angeln <b id="ph-spiel">0</b></span></div>
+        <svg class="verlauf" id="ph-verlauf" viewBox="0 0 180 56" preserveAspectRatio="none" aria-hidden="true"><polyline points=""/></svg>
+        <div class="spitze" id="ph-spitze">Höchststand: 0</div>
+      </section>
+    </div>
+    <p class="hinweis">Live: Jeder offene Tab zählt, bis er geschlossen wird oder eine Minute im Hintergrund liegt. Diese Seite selbst zählt nicht mit.
+      Verlauf und Höchststand gelten seit dem Öffnen dieser Seite (die letzten 30 Minuten). <a href="https://fmcode.de/">Zurück zu fmcode.de</a></p>
+  </div>
+</main>
+
+<script src="praesenz.js"></script>
+<script>
+(function () {
+  var SB = 'https://yzzipjtounvktdhhvrnt.supabase.co';
+  var SCHLUESSEL = 'sb_publishable_OCNFFT4wa4CMaHyhcLAY4A_u2flZF1s'; // öffentlicher Schlüssel, kein Geheimnis
+  var LOKAL = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+  var $ = function (id) { return document.getElementById(id); };
+
+  function status(text, art) {
+    $('status-text').textContent = text;
+    $('status').className = 'status' + (art ? ' ' + art : '');
+  }
+  function gesperrt(text) {
+    status('Nicht angemeldet', 'weg');
+    if (text) $('gesperrt-text').textContent = text;
+    $('gesperrt').hidden = false;
+  }
+
+  // Dieselbe Anmeldung wie der Kasten „Persönliche Seiten“ auf fmcode.de (persoenlich.js).
+  // Freigegeben ist, wer die Tabelle fm_seiten lesen darf (Row Level Security).
+  async function pruefeAnmeldung() {
+    var s = null;
+    try { s = JSON.parse(localStorage.getItem('fmcode-anmeldung')); } catch (e) {}
+    if (!s || !s.zugang) return false;
+    if (s.ablauf - 60 < Date.now() / 1000) {
+      var r = await fetch(SB + '/auth/v1/token?grant_type=refresh_token', { method: 'POST',
+        headers: { apikey: SCHLUESSEL, 'Content-Type': 'application/json' }, body: JSON.stringify({ refresh_token: s.erneuern }) });
+      var d = r.ok ? await r.json() : null;
+      if (!d || !d.access_token) return false;
+      s = { zugang: d.access_token, erneuern: d.refresh_token, ablauf: d.expires_at || Math.floor(Date.now() / 1000) + (d.expires_in || 3600) };
+      try { localStorage.setItem('fmcode-anmeldung', JSON.stringify(s)); } catch (e) {}
+    }
+    var a = await fetch(SB + '/rest/v1/fm_seiten?select=id&limit=1', { headers: { apikey: SCHLUESSEL, Authorization: 'Bearer ' + s.zugang } });
+    if (!a.ok) return false;
+    var zeilen = await a.json();
+    return Array.isArray(zeilen) && zeilen.length > 0;
+  }
+
+  // ---------- Zählen und Anzeigen
+  var verlauf = { ff: [], ph: [] }, spitze = { ff: 0, ph: 0 }, jetzt = { ff: null, ph: null };
+  var PUNKTE = 180; // alle 10 s ein Punkt -> 30 Minuten
+
+  function zeichne(spiel) {
+    var v = verlauf[spiel], hoch = Math.max(2, Math.max.apply(null, v.concat([0])));
+    var pts = v.map(function (n, i) {
+      var x = (PUNKTE - v.length + i) / (PUNKTE - 1) * 180;
+      var y = 53 - n / hoch * 50;
+      return x.toFixed(1) + ',' + y.toFixed(1);
+    }).join(' ');
+    document.querySelector('#' + spiel + '-verlauf polyline').setAttribute('points', pts);
+  }
+
+  function zaehle(stand) {
+    var z = { ff: { n: 0, menu: 0, spiel: 0 }, ph: { n: 0, menu: 0, spiel: 0 } };
+    for (var k in stand) {
+      var m = stand[k][stand[k].length - 1];
+      var spiel = m && (m.spiel === 'feuer-frei' ? 'ff' : m.spiel === 'petri-heil' ? 'ph' : null);
+      if (!spiel) continue;
+      z[spiel].n++;
+      if (m.wo === 'spiel') z[spiel].spiel++; else z[spiel].menu++;
+    }
+    ['ff', 'ph'].forEach(function (s) {
+      $(s + '-n').textContent = z[s].n;
+      $(s + '-menu').textContent = z[s].menu;
+      $(s + '-spiel').textContent = z[s].spiel;
+      if (z[s].n > spitze[s]) spitze[s] = z[s].n;
+      $(s + '-spitze').textContent = 'Höchststand: ' + spitze[s];
+      jetzt[s] = z[s].n;
+    });
+    var summe = z.ff.n + z.ph.n;
+    $('gesamt').innerHTML = '<b>' + summe + '</b> online in beiden Spielen';
+    document.title = summe + ' online · Spieler online';
+  }
+
+  function probe() {
+    ['ff', 'ph'].forEach(function (s) {
+      if (jetzt[s] === null) return;
+      verlauf[s].push(jetzt[s]);
+      if (verlauf[s].length > PUNKTE) verlauf[s].shift();
+      zeichne(s);
+    });
+  }
+
+  function starte() {
+    $('inhalt').hidden = false;
+    status('Verbinde …');
+    var p = praesenz({
+      url: SB, key: SCHLUESSEL, kanal: LOKAL ? 'fmcode-online-test' : 'fmcode-online',
+      aenderung: function (stand) {
+        if (p && p.verbunden()) status(LOKAL ? 'Live (Testkanal)' : 'Live', 'live');
+        else status('Verbindung weg, versuche es neu …', 'weg');
+        zaehle(stand);
+      },
+    });
+    setTimeout(probe, 1500);
+    setInterval(probe, 10000);
+  }
+
+  // Beim Entwickeln auf dem eigenen PC ohne Anmeldung (dort nur der Testkanal)
+  if (LOKAL) return starte();
+  pruefeAnmeldung().then(function (ok) {
+    if (ok) starte();
+    else gesperrt();
+  }, function () {
+    gesperrt('Keine Verbindung zu Supabase. Bitte die Internetverbindung prüfen und neu laden.');
+  });
+})();
+</script>
+</body>
+</html>
