@@ -56,6 +56,22 @@ svg.verlauf polyline{fill:none;stroke-width:2;vector-effect:non-scaling-stroke;s
 .hinweis{color:var(--leise);font-size:.875rem;line-height:1.5;margin:0}
 .kasten{border-radius:22px;background:rgba(236,230,218,.06);padding:22px;line-height:1.5}
 a{color:var(--text)}
+.bew{border-radius:22px;background:var(--ff-ground);padding:20px 22px;display:flex;flex-direction:column;gap:12px}
+.bew h2{margin:0;font-size:1.25rem;font-family:"Rajdhani",var(--body);letter-spacing:.06em;text-transform:uppercase}
+.bew h2 span{color:var(--ff-gold)}
+.schnitt{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;color:var(--leise)}
+.schnitt b{font-family:"Rajdhani",var(--body);font-size:2.5rem;color:var(--ff-gold);line-height:1}
+.sterne{color:var(--ff-gold);letter-spacing:2px}
+.sterne i{font-style:normal;color:rgba(236,230,218,.2)}
+.verteilung{display:grid;grid-template-columns:auto 1fr auto;gap:4px 10px;align-items:center;font-size:.875rem;color:var(--leise)}
+.verteilung div{height:8px;border-radius:4px;background:rgba(236,230,218,.08);overflow:hidden}
+.verteilung div span{display:block;height:100%;background:var(--ff-gold)}
+.liste{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.liste li{border-top:1px solid rgba(236,230,218,.08);padding-top:10px;display:flex;flex-direction:column;gap:4px}
+.liste .kopf{display:flex;gap:10px;flex-wrap:wrap;align-items:baseline;font-size:.875rem;color:var(--leise)}
+.liste .kopf b{color:var(--text)}
+.liste p{margin:0;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere}
+.liste .leer{color:var(--leise);font-style:italic}
 </style>
 </head>
 <body>
@@ -88,6 +104,12 @@ a{color:var(--text)}
         <div class="spitze" id="ph-spitze">Höchststand: 0</div>
       </section>
     </div>
+    <section class="bew" id="bew" aria-label="Bewertungen Feuer Frei">
+      <h2>Bewertungen <span>Feuer Frei</span></h2>
+      <div class="schnitt" id="bew-schnitt">Lade …</div>
+      <div class="verteilung" id="bew-verteilung" hidden></div>
+      <ul class="liste" id="bew-liste"></ul>
+    </section>
     <p class="hinweis">Live: Jeder offene Tab zählt, bis er geschlossen wird oder eine Minute im Hintergrund liegt. Diese Seite selbst zählt nicht mit.
       Verlauf und Höchststand gelten seit dem Öffnen dieser Seite (die letzten 30 Minuten). <a href="https://fmcode.de/">Zurück zu fmcode.de</a></p>
   </div>
@@ -128,7 +150,37 @@ a{color:var(--text)}
     var a = await fetch(SB + '/rest/v1/fm_seiten?select=id&limit=1', { headers: { apikey: SCHLUESSEL, Authorization: 'Bearer ' + s.zugang } });
     if (!a.ok) return false;
     var zeilen = await a.json();
+    zugang = s.zugang;
     return Array.isArray(zeilen) && zeilen.length > 0;
+  }
+  var zugang = null;
+
+  // ---------- Bewertungen aus Feuer Frei (Tabelle ff_bewertungen, nur für Freigegebene lesbar)
+  function esc(t) { return String(t).replace(/[&<>"']/g, function (c) { return '&#' + c.charCodeAt(0) + ';'; }); }
+  function sterne(n) { return '★★★★★'.slice(0, n) + '<i>' + '★★★★★'.slice(n) + '</i>'; }
+  async function ladeBewertungen() {
+    if (!zugang) { $('bew').hidden = true; return; }
+    var r = await fetch(SB + '/rest/v1/ff_bewertungen?select=erstellt,sterne,text,name,sprache&order=erstellt.desc&limit=200',
+      { headers: { apikey: SCHLUESSEL, Authorization: 'Bearer ' + zugang } }).catch(function () { return null; });
+    if (!r || !r.ok) { $('bew-schnitt').textContent = 'Noch nicht eingerichtet (supabase/bewertungen.sql im SQL-Editor ausführen).'; return; }
+    var z = await r.json();
+    if (!z.length) { $('bew-schnitt').textContent = 'Noch keine Bewertungen.'; $('bew-verteilung').hidden = true; $('bew-liste').innerHTML = ''; return; }
+    var summe = 0, je = [0, 0, 0, 0, 0, 0];
+    z.forEach(function (b) { summe += b.sterne; je[b.sterne]++; });
+    var schnitt = summe / z.length;
+    $('bew-schnitt').innerHTML = '<b>' + schnitt.toFixed(1).replace('.', ',') + '</b><span class="sterne">' + sterne(Math.round(schnitt)) + '</span><span>'
+      + z.length + (z.length === 1 ? ' Bewertung' : ' Bewertungen') + (z.length >= 200 ? ' (die letzten 200)' : '') + '</span>';
+    var hoch = Math.max.apply(null, je);
+    $('bew-verteilung').innerHTML = [5, 4, 3, 2, 1].map(function (n) {
+      return '<span>' + n + ' ★</span><div><span style="width:' + (je[n] / hoch * 100).toFixed(0) + '%"></span></div><span>' + je[n] + '</span>';
+    }).join('');
+    $('bew-verteilung').hidden = false;
+    $('bew-liste').innerHTML = z.map(function (b) {
+      var wann = new Date(b.erstellt).toLocaleString('de-DE', { day: 'numeric', month: 'numeric', year: '2-digit', hour: '2-digit', minute: '2-digit' });
+      return '<li><div class="kopf"><span class="sterne">' + sterne(b.sterne) + '</span><b>' + esc(b.name || 'ohne Namen') + '</b><span>' + wann
+        + (b.sprache ? ' · ' + esc(b.sprache.toUpperCase()) : '') + '</span></div>'
+        + (b.text ? '<p>' + esc(b.text) + '</p>' : '<p class="leer">ohne Kommentar</p>') + '</li>';
+    }).join('');
   }
 
   // ---------- Zählen und Anzeigen
@@ -178,6 +230,8 @@ a{color:var(--text)}
 
   function starte() {
     $('inhalt').hidden = false;
+    ladeBewertungen();
+    setInterval(ladeBewertungen, 60000);
     status('Verbinde …');
     var p = praesenz({
       url: SB, key: SCHLUESSEL, kanal: LOKAL ? 'fmcode-online-test' : 'fmcode-online',
